@@ -1,0 +1,4 @@
+[submodule "web-scrcpy"]
+	path = web-scrcpy
+	url = https://github.com/hma02/web-scrcpy.git
+	branch = multid
