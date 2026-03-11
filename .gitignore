@@ -5,4 +5,8 @@ venv/
 .dist/
 build/
 *.spec
-data/
+data/# Local web-scrcpy copy (use submodule instead)
+# app.py
+# scrcpy.py
+# templates/
+# static/

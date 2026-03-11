@@ -28,7 +28,7 @@ RUN apk add --no-cache \
     lapack-dev \
     blas-dev
 
-# 复制项目文件
+# 复制项目文件（包括已初始化的子模块）
 COPY . /app
 
 # 创建虚拟环境并安装 Python 依赖
@@ -60,20 +60,18 @@ RUN apk add --no-cache \
     busybox-extras \
     libc6-compat \
     musl \
-    libgcc
+    libgcc \
+    android-tools
 
 # 从构建阶段复制必要的文件
 COPY --from=builder /app/venv /app/venv
-COPY --from=builder /app/app.py /app/app.py
-COPY --from=builder /app/scrcpy.py /app/scrcpy.py
+COPY --from=builder /app/web-scrcpy/app.py /app/app.py
+COPY --from=builder /app/web-scrcpy/scrcpy.py /app/scrcpy.py
 COPY --from=builder /app/adb_manager.py /app/adb_manager.py
-COPY --from=builder /app/scrcpy-server /app/scrcpy-server
-COPY --from=builder /app/templates /app/templates
-COPY --from=builder /app/static /app/static
+COPY --from=builder /app/web-scrcpy/scrcpy-server /app/scrcpy-server
+COPY --from=builder /app/web-scrcpy/templates /app/templates
+COPY --from=builder /app/web-scrcpy/static /app/static
 COPY --from=builder /app/adb /app/adb
-
-# 设置adb可执行文件的执行权限
-RUN chmod +x /app/adb/linux/adb
 
 # 暴露端口
 EXPOSE 5000
@@ -83,4 +81,4 @@ ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
 
 # 启动应用
-CMD ["sh", "-c", ". /app/venv/bin/activate && python3 app.py --port 5000"]
+CMD ["sh", "-c", ". /app/venv/bin/activate && adb connect 192.168.1.111:5555 && adb connect 192.168.1.127:5555 && python3 app.py --port 5000"]
