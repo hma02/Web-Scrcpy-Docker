@@ -14,31 +14,34 @@
 1. 拉取镜像
 
    ```bash
-   docker pull ghcr.io/neanc/web-scrcpy:latest
-   ```
-
-2. 运行容器
-
-   ```bash
-   docker run -d \
-      --name web-scrcpy \
-      --hostname web-scrcpy \
-      -p 5000:5000 \
-      -v ./data:/app/data \
-      -v /dev/bus/usb:/dev/bus/usb \
-      --privileged \
-      --restart unless-stopped \
-      -e FLASK_ENV=production \
-      -e FLASK_APP=app.py \
-      ghcr.io/neanc/web-scrcpy:latest
+   bash build.sh
    ```
 
 ### 使用 Docker Compose
 
-```bash
-wget https://raw.githubusercontent.com/NEANC/Web-Scrcpy-Docker/main/docker-compose.yml
+   ```bash
+   web-scrcpy:
+      container_name: web-scrcpy
+      image: web-scrcpy:test
+      restart: unless-stopped
+      ports:
+         - "5001:5000"
+      stdin_open: true
+      tty: true
+      volumes:
+         - /home/pi/.android:/root/.android   # use the same key as host, assume host already connected those devices
+      command: >
+         sh -c "
+         . /app/venv/bin/activate &&
+         adb connect 192.168.1.XX1:5555 &&
+         adb connect 192.168.1.XX2:5555 &&
+         adb connect 192.168.1.XX3:5555 &&
+         python3 app.py --port 5000 --video_bit_rate 256000
+         "
+   ```
 
-nano docker-compose.yml
+
+```bash
 
 docker-compose up -d
 ```
@@ -48,14 +51,7 @@ docker-compose up -d
 1. 克隆仓库
 
    ```bash
-   git clone https://github.com/NEANC/Web-Scrcpy-Docker.git
-   cd Web-Scrcpy-Docker
-   ```
-
-2. 构建镜像
-
-   ```bash
-   docker build -t web-scrcpy .
+   cd web-scrcpy
    ```
 
 ### 源码运行

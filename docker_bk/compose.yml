@@ -1,0 +1,22 @@
+services:
+  web-scrcpy:
+    container_name: web-scrcpy
+    build: .                  # 👈 ADD THIS
+    image: web-scrcpy:test
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    stdin_open: true
+    tty: true
+    volumes:
+      - /home/pi/.android:/root/.android   # 👈 KEY LINE
+    command: >
+      sh -c "
+      . /app/venv/bin/activate &&
+      adb connect 192.168.1.111:5555 &&
+      adb connect 192.168.1.127:5555 &&
+      adb connect 192.168.1.220:5555 &&
+      python3 app.py --port 5000 --video_bit_rate 256000
+      "
+
+

@@ -66,6 +66,7 @@ RUN apk add --no-cache \
 # 从构建阶段复制必要的文件
 COPY --from=builder /app/venv /app/venv
 COPY --from=builder /app/web-scrcpy/app.py /app/app.py
+COPY --from=builder /app/web-scrcpy/stream_lifecycle.py /app/stream_lifecycle.py
 COPY --from=builder /app/web-scrcpy/scrcpy.py /app/scrcpy.py
 COPY --from=builder /app/adb_manager.py /app/adb_manager.py
 COPY --from=builder /app/web-scrcpy/scrcpy-server /app/scrcpy-server
